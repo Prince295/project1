@@ -1,5 +1,5 @@
 import sys
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtCore
 from design import Ui_MainWindow
 from calc import Ui_Form
 import os
@@ -10,7 +10,8 @@ class ExampleApp(QtWidgets.QMainWindow, Ui_MainWindow):
         super().__init__()
         self.setupUi(self)
         self.btnBrowse.clicked.connect(self.browse_folder)
-        self.calcButton.clicked.connect()
+        self.calc = CCalculator(self)
+        self.calcButton.clicked.connect(self.calc.show)
     def browse_folder(self):
         self.listWidget.clear()
         directory = QtWidgets.QFileDialog.getExistingDirectory(self, "Выберите папку")
@@ -19,9 +20,15 @@ class ExampleApp(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.listWidget.addItem(file_name)
 
 class CCalculator(QtWidgets.QWidget, Ui_Form):
-    def __init__(self):
+    def __init__(self, parent):
         super().__init__()
+        self.result =''
         self.setupUi(self)
+        self.oneButton.clicked.connect(self.setOneButton)
+
+    def setOneButton(self):
+        self.result += '1'
+        self.lineEdit.setText(self.result)
 
 
 
