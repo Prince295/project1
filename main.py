@@ -4,6 +4,7 @@ from design import Ui_MainWindow
 from calc import Ui_Form
 import os
 import sys
+import re
 
 class ExampleApp(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self):
@@ -24,6 +25,7 @@ class CCalculator(QtWidgets.QWidget, Ui_Form):
     def __init__(self, parent):
         super().__init__()
         self.result =''
+        self.operators = ['+', '-', '*', '/', '^']
         self.setupUi(self)
         self.oneButton.clicked.connect(self.setOneButton)
         self.twoButton.clicked.connect(self.setTwoButton)
@@ -80,11 +82,20 @@ class CCalculator(QtWidgets.QWidget, Ui_Form):
     def setClearButton(self):
         self.lineEdit.clear(self)
 
-    def setPlusButton(self):
-        pass
+    def setDotButton(self):
+        self.result += '.'
 
-    def setMinusButton(self):
-        pass
+    def setPlusButton(self):
+        #а пусть оно так для всех знаков и работает, все равно нам потом вот разделять строку.
+        #тут надо еще предусмотреть проверку на последний введенный символ строки, как в калькуляторах,
+        #не может же быть у них там подряд два плюса. Последний знак, если он оператор, надо менять
+        self.result += '+'
+        self.lineEdit.setText(self.result)
+    #доделай пока все это, потом надо подумать, а как сделать так, чтобы операции выполнялись по порядку :)
+    #Например, умножение всегда впереди сложения.
+        def setMinusButton(self):
+        self.result += '-'
+        self.lineEdit.setText(self.result)
 
     def setUmnButton(self):
         pass
@@ -98,7 +109,17 @@ class CCalculator(QtWidgets.QWidget, Ui_Form):
         pass
 
     def setRavnoButton(self):
-        pass
+        self.split_args()
+
+    def split_args(self):
+        #это работает примерно так
+        #шаблоном разбивается наша строка, и мы получаем аргументы. Вторым шаблоном неплохо
+        #получить еще наши все знаки, а дальше просто произвести получившиеся математические операции (тут можно
+        #посмотреть в сторону NumPy) в статье написаны паттерны, как это сделать.
+        splitted_string = self.result
+        arguments = re.split(r'[+*/-]', splitted_string )
+        print(arguments)
+
 
 
 sys._excepthook = sys.excepthook
